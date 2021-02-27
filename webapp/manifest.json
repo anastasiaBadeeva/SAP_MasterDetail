@@ -15,7 +15,17 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri": "localService/metadata.xml"
+					"localUri": "localService/metadata.xml",
+					"annotations": [
+						"annotation"
+					]
+				}
+			},
+			"annotation": {
+				"type": "ODataAnnotation",
+				"uri": "annotations/annotation.xml",
+				"settings": {
+					"localUri": "annotations/annotation.xml"
 				}
 			}
 		},
@@ -72,6 +82,10 @@
 			"": {
 				"dataSource": "mainService",
 				"preload": true
+			},
+			"@i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
 			}
 		},
 		"routing": {
@@ -99,7 +113,7 @@
 					]
 				},
 				{
-					"pattern": "zjblessons_base_Materials/{objectId}",
+					"pattern": "detail/{entity}",
 					"name": "object",
 					"target": [
 						"master",
