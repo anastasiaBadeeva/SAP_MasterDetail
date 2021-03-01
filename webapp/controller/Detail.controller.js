@@ -317,7 +317,6 @@ sap.ui.define([
 					let oContext = this.getModel().createEntry(this._oSmartTable.getEntitySet(), {
 						properties: {
 							GroupID: "",
-							Language: "RU",
 							Version: valueObj.Version,
 							GroupText: valueObj.GroupText
 						}
