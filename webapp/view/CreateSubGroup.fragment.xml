@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"
 	xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartField="sap.ui.comp.smartfield">
-	<Dialog id="generateAnnotations" title="{i18n>Group}" contentWidth="400px" contentHeight="135px">
+	<Dialog id="generateAnnotations4" title="{i18n>tSubGroupText}" contentWidth="400px" contentHeight="135px">
 		<beginButton>
 			<Button text="{i18n>btnOk}" press="onPressOKCreate"/>
 		</beginButton>
@@ -12,7 +12,7 @@
 				<smartForm:SmartForm editable="true">
 					<smartForm:Group>
 						<smartForm:GroupElement>
-							<smartField:SmartField value="{GroupText}"/>
+							<smartField:SmartField editable="true" value="{SubGroupText}"/>
 						</smartForm:GroupElement>
 					</smartForm:Group>
 				</smartForm:SmartForm>

@@ -49,6 +49,6 @@
       "description": "jetCources"
     }
   ],
-  "welcomeFile": "/webapp/test/flpSandbox.html",
+  "welcomeFile": "/webapp/index.html",
   "sendWelcomeFileRedirect": true
 }

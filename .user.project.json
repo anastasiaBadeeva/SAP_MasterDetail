@@ -1,6 +1,44 @@
 {
   "run": [
     {
+      "filePath": "/webapp/index.html",
+      "previewMode": 1,
+      "dataMode": 1,
+      "workspace": "withoutWorkspace",
+      "ui5ActiveVersion": null,
+      "ui5VerSource": null,
+      "isDefaultVersion": 0,
+      "urlParameters": [],
+      "hashParameter": "",
+      "backendSystem": [],
+      "urlParametersNotNeeded": false,
+      "_metadata": {
+        "id": 456324,
+        "runnerId": "webapprunner",
+        "displayName": "Configuration 2",
+        "lastRunTimeStamp": 1614635275313
+      }
+    },
+    {
+      "filePath": "/webapp/index.html",
+      "previewMode": 1,
+      "dataMode": 1,
+      "workspace": "withoutWorkspace",
+      "ui5ActiveVersion": null,
+      "ui5VerSource": null,
+      "isDefaultVersion": 0,
+      "urlParameters": [],
+      "hashParameter": "",
+      "backendSystem": [],
+      "urlParametersNotNeeded": false,
+      "_metadata": {
+        "id": 9904198,
+        "runnerId": "webapprunner",
+        "displayName": "Configuration",
+        "lastRunTimeStamp": 1614626706766
+      }
+    },
+    {
       "filePath": "/MasterDetail/webapp/test/flpSandbox.html",
       "previewMode": 1,
       "dataMode": 1,
@@ -25,7 +63,7 @@
         "id": "8397914",
         "runnerId": "webapprunner",
         "displayName": "App in FLP Sandbox",
-        "lastRunTimeStamp": 1614415769545
+        "lastRunTimeStamp": 1614618085358
       }
     },
     {

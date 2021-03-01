@@ -27,6 +27,7 @@ sap.ui.define([
 			activeVersion: new Filter("Version", FilterOperator.NE, "D"),
 			deactiveVersion: new Filter("Version", FilterOperator.EQ, "D")
 		},
+
 		_oViewModel: new JSONModel({
 			button: {
 				visible: {
@@ -68,6 +69,7 @@ sap.ui.define([
 			this.setModel(this._oViewModel, "detailView");
 
 			this.getOwnerComponent().getModel().metadataLoaded().then(this._onMetadataLoaded.bind(this));
+			this.getOwnerComponent()._detailView = this;
 
 		},
 
@@ -119,6 +121,45 @@ sap.ui.define([
 		 * @private
 		 */
 
+		onPressDeactivateDelete: function(oEvent) {
+			let aSelectedContexts = this._oTable.getSelectedIndices()
+				.map(iSelectedIndex => this._oTable.getContextByIndex(iSelectedIndex));
+			if (this.getModel("detailView").getProperty("/button/pressed/ChangeVersionMode")) {
+				MessageBox.confirm(this.getResourceBundle().getText("msgDelete"), {
+					onClose: oAction => {
+						if (oAction === MessageBox.Action.OK) {
+							aSelectedContexts.forEach(oContext => {
+								this.getModel().remove(oContext.getPath(), {
+									success: () => {
+										MessageToast.show("msgSuccessDelete");
+									}
+								});
+							});
+						}
+					}
+				});
+			} else {
+				MessageBox.confirm(this.getResourceBundle().getText("msgDeactivate"), {
+					onClose: oAction => {
+						if (oAction === MessageBox.Action.OK) {
+							aSelectedContexts.forEach(oContext => {
+								this.getModel().setProperty(oContext.getPath() + "/Version", "D");
+							});
+							this.getModel().submitChanges({
+								success: () => {
+									MessageToast.show("msgSuccessDeactivate");
+								}
+							});
+						}
+					}
+				});
+			}
+		},
+
+		onPressRefresh: function(oEvent) {
+			this._oSmartTable.rebindTable(true);
+			MessageToast.show(this.getResourceBundle().getText("msgRefreshTable"));
+		},
 		onPressOnChangeSelectionMode: function(oEvent) {
 			this.getModel("detailView").setProperty("/table/selectionMode", oEvent.getParameter("pressed") ? "Multi" : "Single");
 		},
@@ -126,8 +167,6 @@ sap.ui.define([
 		onSelectionChange: function() {
 			this.getModel("detailView").setProperty("/table/selectedItemsCount", this._oTable.getSelectedIndices().length);
 		},
-
-	
 
 		onPressRestore: function(oEvent) {
 			let aSelectedContexts = this._oTable.getSelectedIndices()
@@ -162,24 +201,125 @@ sap.ui.define([
 			this._oDialog.destroy();
 			this._oDialog = null;
 		},
-	
+
 		onChangeVersionMode: function() {
 			this._oSmartTable.rebindTable();
 		},
 
-		onPressCreate: function() {
+		onPressCreate: function(oEvent) {
+			var entity = this._oSmartTable.getEntitySet();
+			console.log(entity)
+			if (entity === "zjblessons_base_Groups") {
+				sap.ui.core.Fragment.load({
+						name: "jetCources.MasterDetail.view.CreateGroup",
+						controller: this
+					})
+					.then(oDialog => {
+						let oContext = this.getModel().createEntry(this._oSmartTable.getEntitySet(), {
+							properties: {
+								GroupID: "",
+								Version: "A",
+								Language: "RU"
+							}
+						});
+						this.getView().addDependent(oDialog);
+						oDialog.setBindingContext(oContext);
+						oDialog.open();
+						this._oDialog = oDialog;
+					});
+			} else if (entity === "zjblessons_base_SubGroups") {
+				sap.ui.core.Fragment.load({
+						name: "jetCources.MasterDetail.view.CreateSubGroup",
+						controller: this
+					})
+					.then(oDialog => {
+						let oContext = this.getModel().createEntry(this._oSmartTable.getEntitySet(), {
+							properties: {
+								GroupID: "",
+								Version: "A",
+								Language: "RU"
+							}
+						});
+						this.getView().addDependent(oDialog);
+						oDialog.setBindingContext(oContext);
+						oDialog.open();
+						this._oDialog = oDialog;
+					});
+			}
+			else if (entity === "zjblessons_base_Plants") {
+				sap.ui.core.Fragment.load({
+						name: "jetCources.MasterDetail.view.CreatePlants",
+						controller: this
+					})
+					.then(oDialog => {
+						let oContext = this.getModel().createEntry(this._oSmartTable.getEntitySet(), {
+							properties: {
+								GroupID: "",
+								Version: "A",
+								Language: "RU"
+							}
+						});
+						this.getView().addDependent(oDialog);
+						oDialog.setBindingContext(oContext);
+						oDialog.open();
+						this._oDialog = oDialog;
+					});
+			}
+				else if (entity === "zjblessons_base_Regions") {
+				sap.ui.core.Fragment.load({
+						name: "jetCources.MasterDetail.view.CreateRegions",
+						controller: this
+					})
+					.then(oDialog => {
+						let oContext = this.getModel().createEntry(this._oSmartTable.getEntitySet(), {
+							properties: {
+								GroupID: "",
+								Version: "A",
+								Language: "RU"
+							}
+						});
+						this.getView().addDependent(oDialog);
+						oDialog.setBindingContext(oContext);
+						oDialog.open();
+						this._oDialog = oDialog;
+					});
+			}
+
+		},
+		_openDialog: function(sDialogName, sPath) {
+			if (this._oDialog) {
+				this._oDialog.destroy();
+			}
+
+			if (!this._oDialog) {
+				this._oDialog = sap.ui.xmlfragment(sDialogName, "jetCources.MasterDetail.view" + sDialogName, this);
+				this._oDialog.setModel(this.getModel());
+				this.getView().addDependent(this._oDialog);
+			}
+
+			// this._oDialog._oPage = sap.ui.core.Fragment.byId(sDialogName, "p" + sDialogName);
+			// if (this._oDialog._oPage !== undefined) {
+			// 	this._oDialog._oPage.unbindElement();
+			// 	if (sPath !== undefined) {
+			// 		this._oDialog._oPage.bindElement(sPath);
+			// 	}
+			// }
+
+		},
+		onCopy: function(oEvent) {
+			var TableValue = this._oTable.getSelectedIndices()[0];
+			let valueObj = this._oTable.getContextByIndex(TableValue).getObject();
 			sap.ui.core.Fragment.load({
-					name: "jbcourses.MasterDetailApp.view.CreateGroup",
+					name: "jetCources.MasterDetail.view.CreateGroup",
 					controller: this
 				})
 				.then(oDialog => {
-					// oDialog.getBeginButton().attachPress(this.onPressLogin.bind(this, oDialog, oEntity, resolve));
-					// oDialog.getEndButton().attachPress(this.onPressCancelLogin.bind(this, oDialog, resolve));
 					let oContext = this.getModel().createEntry(this._oSmartTable.getEntitySet(), {
 						properties: {
 							GroupID: "",
-							Version: "A",
-							Language: "RU"
+							Language: "RU",
+							Version: valueObj.Version,
+							GroupText: valueObj.GroupText
 						}
 					});
 					this.getView().addDependent(oDialog);
@@ -187,8 +327,8 @@ sap.ui.define([
 					oDialog.open();
 					this._oDialog = oDialog;
 				});
-		},
 
+		},
 		/* =========================================================== */
 		/* begin: internal methods                                     */
 		/* =========================================================== */
@@ -277,7 +417,7 @@ sap.ui.define([
 					type: "Default",
 					tooltip: "{i18n>ttCopy}",
 					text: "{i18n>ttCopy}",
-					//press: this.catalog.onCopy.bind(this),
+					press: this.onCopy.bind(this),
 					visible: "{detailView>/button/visible/Copy}",
 					enabled: "{= (${detailView>/table/selectedItemsCount} === 1) && !${detailView>/button/pressed/ChangeVersionMode} }"
 				}),
@@ -285,11 +425,10 @@ sap.ui.define([
 					//id: "btnRefresh",
 					icon: "{i18n>iRefresh}",
 					type: "Default",
-					tooltip: "{i18n>ttRefresh}",
-					//press: this.catalog.onRefresh.bind(this),
+					// tooltip: "{i18n>ttRefresh}",
 					text: "{i18n>ttRefresh}",
 					visible: "{detailView>/button/visible/Refresh}",
-					// press: this.onPressRefresh.bind(this)
+					press: this.onPressRefresh.bind(this)
 				}),
 				new OverflowToolbarButton({
 					//id: "btnDeactivateDelete",
@@ -300,7 +439,7 @@ sap.ui.define([
 					type: "Default",
 					//press: this.catalog.onDeactivateDelete.bind(this),
 					enabled: "{= ${detailView>/table/selectedItemsCount} > 0 }",
-					// press: this.onPressDeactivateDelete.bind(this)
+					press: this.onPressDeactivateDelete.bind(this)
 				}),
 				new OverflowToolbarButton({
 					//id: "btnRestore",
@@ -345,6 +484,24 @@ sap.ui.define([
 			});
 			this._oTable.setSelectionBehavior("Row");
 			this._oTable.attachRowSelectionChange(this.onSelectionChange.bind(this));
+			this._oTable.addColumn(new sap.ui.table.Column({
+				template: new sap.m.Text({
+					text: "{GroupDescription}"
+				}),
+				label: new sap.m.Label({
+					text: "{i18n>tGroupDescription}"
+				}),
+				customData: [
+					new sap.ui.core.CustomData({
+						key: "p13nData",
+						value: {
+							"columnKey": "GroupDescription",
+							"leadingProperty": "GroupDescription",
+							"columnIndex": "2"
+						}
+					})
+				]
+			}));
 
 			this.getModel("detailView").setProperty("/table/selectedItemsCount", 0);
 			this.getModel("detailView").setProperty("/table/selectionMode", "Single");
@@ -363,7 +520,7 @@ sap.ui.define([
 						icon: "{i18n>iEdit}",
 						type: "Custom",
 						text: "{i18n>ttEdit}",
-						//press: this._onUpdate.bind(this),
+						press: this._onPressUpdate.bind(this),
 						visible: "{= ${detailView>/button/visible/Update} && !${detailView>/button/pressed/ChangeVersionMode} }"
 					})
 				]
@@ -377,7 +534,19 @@ sap.ui.define([
 			this.getView().byId("page").destroyHeaderContent();
 			this.getView().byId("page").addHeaderContent(this._oSmartFilterBar);
 		},
-
+		_onPressUpdate: function(oEvent) {
+			let oContext = oEvent.getSource().getBindingContext();
+			sap.ui.core.Fragment.load({
+					name: "jetCources.MasterDetail.view.CreateGroup",
+					controller: this
+				})
+				.then(oDialog => {
+					this.getView().addDependent(oDialog);
+					oDialog.setBindingContext(oContext);
+					oDialog.open();
+					this._oDialog = oDialog;
+				});
+		},
 		_onBeforeRebindTable: function(oEvent) {
 			if (oEvent) {
 				var sFilterKey = this.getModel("detailView").getProperty("/button/pressed/ChangeVersionMode") ? "deactiveVersion" :
